@@ -1,36 +1,98 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# BlinkBox FPS Arena - Game Website
+
+A responsive and modern website for a PC FPS multiplayer game. Built with Next.js and TailwindCSS.
+
+## Features
+
+- Fully responsive design for all devices
+- Modern UI with tactical FPS game aesthetics
+- Configurable site name and details via environment variables
+- Sections for game modes, operators, weapons, and battle pass
+- System requirements section
+- Download section
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
+- Node.js 16.x or higher
+- npm or yarn
+
+### Installation
+
+1. Clone the repository
+```bash
+git clone <repository-url>
+cd <repository-directory>
+```
+
+2. Install dependencies
+```bash
+npm install
+# or
+yarn install
+```
+
+3. Configure environment variables by creating a `.env` file in the root directory (or use the existing one)
+
+4. Run the development server
 ```bash
 npm run dev
 # or
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+5. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Configuration
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The site can be configured using environment variables in the `.env` file:
 
-## Learn More
+```
+# Site Configuration
+NEXT_PUBLIC_SITE_NAME="BlinkBox FPS Arena"
+NEXT_PUBLIC_SITE_DESCRIPTION="Intense tactical first-person shooter multiplayer combat. Join the battle on PC and dominate the arena."
+NEXT_PUBLIC_STUDIO_NAME="BlinkBox"
+NEXT_PUBLIC_GAME_NAME="FPS Arena"
 
-To learn more about Next.js, take a look at the following resources:
+# Social Media Links
+NEXT_PUBLIC_DISCORD_URL="https://discord.gg/blinkbox"
+NEXT_PUBLIC_TWITTER_URL="https://twitter.com/blinkbox"
+NEXT_PUBLIC_YOUTUBE_URL="https://youtube.com/blinkbox"
+NEXT_PUBLIC_INSTAGRAM_URL="https://instagram.com/blinkbox"
+NEXT_PUBLIC_FACEBOOK_URL="https://facebook.com/blinkbox"
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Feature Flags
+NEXT_PUBLIC_ENABLE_ESPORTS=true
+NEXT_PUBLIC_ENABLE_LEADERBOARD=true
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Building for Production
 
-## Deploy on Vercel
+```bash
+npm run build
+# or
+yarn build
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Then, you can run the production build with:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm run start
+# or
+yarn start
+```
+
+## Technology Stack
+
+- [Next.js](https://nextjs.org/) - React framework
+- [TailwindCSS](https://tailwindcss.com/) - CSS framework
+- [TypeScript](https://www.typescriptlang.org/) - Type safety
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Created By
+
+BlinkBox Game Studios

@@ -1,0 +1,14 @@
+This directory contains the following images needed for the website:
+
+1. hero-bg.jpg - Main hero background image
+2. logo.png - Delta Force logo
+3. app-store.png - App Store icon
+4. play-store.png - Play Store icon
+5. windows.png - Windows icon
+6. news1.jpg - News thumbnail
+7. team-deathmatch.jpg - Game mode thumbnail
+8. conquest.jpg - Game mode thumbnail
+9. special-ops.jpg - Game mode thumbnail
+10. operators-bg.jpg - Operators section background
+
+Please add these images to make the website functional. 
