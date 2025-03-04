@@ -24,6 +24,10 @@ const Navigation = () => {
                 fill
                 className="object-contain"
                 priority
+                onError={(e) => {
+                  // @ts-expect-error - Event target type is not properly inferred
+                  e.target.style.display = 'none';
+                }}
               />
             </div>
             <div className="hidden md:block">

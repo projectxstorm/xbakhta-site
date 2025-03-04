@@ -41,6 +41,10 @@ export default function Home() {
                   fill
                   className="object-contain"
                   priority
+                  onError={(e) => {
+                    // @ts-expect-error - Event target type is not properly inferred
+                    e.target.style.display = 'none';
+                  }}
                 />
               </div>
               
@@ -309,6 +313,10 @@ export default function Home() {
                     alt={`${studioName} Logo`}
                     fill
                     className="object-contain"
+                    onError={(e) => {
+                      // @ts-expect-error - Event target type is not properly inferred
+                      e.target.style.display = 'none';
+                    }}
                   />
                 </div>
                 <div>
