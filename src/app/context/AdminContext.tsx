@@ -1,6 +1,6 @@
 'use client'
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react'
 
 interface SectionContent {
   title: string;
@@ -958,14 +958,14 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
   }, [bottomButtons, isInitialized]);
   
   // Called when user successfully enters the key sequence
-  const handleSequenceDetected = () => {
+  const handleSequenceDetected = useCallback(() => {
     // If already logged in, just open the sidebar
     if (isAdmin) {
       setAdminSidebarOpen(true);
     } else {
       setIsPasswordDialogOpen(true);
     }
-  };
+  }, [isAdmin, setAdminSidebarOpen, setIsPasswordDialogOpen]);
   
   const toggleAdmin = () => {
     setIsAdmin(prev => !prev);

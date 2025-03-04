@@ -9,7 +9,7 @@ interface GameMode {
   description: string
   image: string
   players: string
-  difficulty?: 'Easy' | 'Medium' | 'Hard' | 'Extreme'
+  difficulty: 'Easy' | 'Medium' | 'Hard' | 'Expert'
   isNew?: boolean
   isPopular?: boolean
   creator?: string
@@ -53,7 +53,7 @@ const GameModes = () => {
       'Easy': 1,
       'Medium': 2,
       'Hard': 3,
-      'Extreme': 4
+      'Expert': 4
     }
     
     const level = levels[difficulty as keyof typeof levels] || 0
