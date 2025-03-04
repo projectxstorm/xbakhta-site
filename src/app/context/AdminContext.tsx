@@ -86,53 +86,72 @@ export interface Operator {
 export interface Map {
   id: string;
   name: string;
-  location: string;
   description: string;
   image: string;
+  features: string[];
   difficulty: 'Easy' | 'Medium' | 'Hard';
+  size: 'Small' | 'Medium' | 'Large';
+  environment: 'Urban' | 'Forest' | 'Desert' | 'Arctic' | 'Industrial' | 'Military';
+  gameModes: string[];
   isNew?: boolean;
-  isPopular?: boolean;
 }
 
-export interface BattlePassTier {
+export interface BattlePassReward {
+  id: string;
   level: number;
   name: string;
   description: string;
-  type: 'Free' | 'Premium';
-  reward: {
-    type: 'Operator' | 'Weapon' | 'Skin' | 'Currency';
-    value: string;
-    image: string;
-  };
+  type: 'item' | 'skin' | 'currency' | 'emote' | 'weapon' | 'operator';
+  rarity: 'common' | 'rare' | 'epic' | 'legendary';
+  image: string;
+  isPremium: boolean;
 }
 
 export interface BattlePass {
-  currentSeason: number;
+  id?: string;
+  name: string;
+  description: string;
+  image?: string;
+  price: number;
+  season: string;
+  durationDays: number;
+  startDate: string;
   endDate: string;
-  tiers: BattlePassTier[];
+  isActive: boolean;
+}
+
+export interface HeroButton {
+  id: string;
+  text: string;
+  url: string;
+  style: string;
+  isPrimary: boolean;
+}
+
+export interface HeroContent {
+  title?: string;
+  subtitle?: string;
+  buttons: HeroButton[];
 }
 
 export interface FooterLink {
-  label: string;
-  href: string;
+  id: string;
+  text: string;
+  url: string;
+  group: string;
 }
 
-export interface Footer {
+export interface FooterContent {
   copyright: string;
   links: FooterLink[];
 }
 
-export interface HeroButton {
-  label: string;
-  href: string;
-  style: 'primary' | 'secondary';
-}
-
-export interface Hero {
-  title: string;
-  subtitle: string;
-  backgroundImage: string;
-  buttons: HeroButton[];
+export interface BottomButton {
+  id: string;
+  text: string;
+  url: string;
+  icon: string;
+  position: string;
 }
 
 type ContentSections = {
@@ -176,11 +195,26 @@ type AdminContextType = {
   deleteMap: (id: string) => void;
   battlePass: BattlePass;
   updateBattlePass: (data: Partial<BattlePass>) => void;
-  updateBattlePassTier: (level: number, data: Partial<BattlePassTier>) => void;
-  footer: Footer;
-  updateFooter: (data: Partial<Footer>) => void;
-  hero: Hero;
-  updateHero: (data: Partial<Hero>) => void;
+  heroContent: HeroContent;
+  updateHeroContent: (data: Partial<HeroContent>) => void;
+  footerContent: FooterContent;
+  updateFooter: (data: Partial<FooterContent>) => void;
+  bottomButtons: BottomButton[];
+  updateBottomButtons: (buttons: BottomButton[]) => void;
+  premiumRewards: BattlePassReward[];
+  freeRewards: BattlePassReward[];
+  addReward: (reward: BattlePassReward) => void;
+  updateReward: (id: string, data: Partial<BattlePassReward>) => void;
+  deleteReward: (id: string) => void;
+  updateHeroButton: (id: string, data: Partial<HeroButton>) => void;
+  addHeroButton: (button: HeroButton) => void;
+  deleteHeroButton: (id: string) => void;
+  addFooterLink: (link: FooterLink) => void;
+  updateFooterLink: (id: string, data: Partial<FooterLink>) => void;
+  deleteFooterLink: (id: string) => void;
+  addBottomButton: (button: BottomButton) => void;
+  updateBottomButton: (id: string, data: Partial<BottomButton>) => void;
+  deleteBottomButton: (id: string) => void;
 }
 
 const defaultContent: ContentSections = {
@@ -548,6 +582,112 @@ const defaultOperators: Operator[] = [
   }
 ];
 
+// Add after defaultOperators
+const defaultMaps: Map[] = [
+  {
+    id: 'map-1',
+    name: 'DOWNTOWN',
+    description: 'A dense urban environment with multiple vertical positions, tight corridors, and open plazas.',
+    image: '/images/maps/downtown.jpg',
+    features: [
+      'Multi-level shopping mall',
+      'Underground parking garage',
+      'Rooftop helicopter pad',
+      'Interactive environment objects'
+    ],
+    difficulty: 'Hard',
+    size: 'Large',
+    environment: 'Urban',
+    gameModes: ['Tactical Operations', 'Team Deathmatch', 'Domination'],
+    isNew: true
+  },
+  {
+    id: 'map-2',
+    name: 'OUTPOST',
+    description: 'A remote military outpost surrounded by harsh arctic wilderness.',
+    image: '/images/maps/outpost.jpg',
+    features: [
+      'Snowstorms affecting visibility',
+      'Reinforced bunkers',
+      'Frozen lake with thin ice',
+      'Supply caches'
+    ],
+    difficulty: 'Medium',
+    size: 'Medium',
+    environment: 'Arctic',
+    gameModes: ['Team Deathmatch', 'Free For All', 'Last Operator Standing']
+  },
+  {
+    id: 'map-3',
+    name: 'COMPOUND',
+    description: 'A hidden training facility deep within a forest, featuring tactical training zones.',
+    image: '/images/maps/compound.jpg',
+    features: [
+      'Dense forest cover',
+      'Obstacle course',
+      'Shooting range',
+      'Command center',
+      'Living quarters'
+    ],
+    difficulty: 'Easy',
+    size: 'Small',
+    environment: 'Forest',
+    gameModes: ['Team Deathmatch', 'Gun Game', 'Tactical Operations']
+  },
+  {
+    id: 'map-4',
+    name: 'REFINERY',
+    description: 'An industrial processing facility with dangerous hazards and complex pathways.',
+    image: '/images/maps/refinery.jpg',
+    features: [
+      'Pressurized gas containers',
+      'Catwalks and pipes',
+      'Control rooms',
+      'Toxic spill zones'
+    ],
+    difficulty: 'Hard',
+    size: 'Medium',
+    environment: 'Industrial',
+    gameModes: ['Domination', 'Tactical Operations', 'Free For All']
+  }
+];
+
+const defaultBattlePass: BattlePass = {
+  id: 'bp-1',
+  name: 'Season Pass',
+  description: 'Get exclusive rewards and benefits',
+  image: '/images/battlepass.jpg',
+  price: 999, // price in cents
+  season: 'Season 1',
+  durationDays: 90,
+  startDate: new Date().toISOString().split('T')[0],
+  endDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+  isActive: true
+};
+
+const defaultHeroContent: HeroContent = {
+  title: 'BECOME THE BEST TACTICAL OPERATOR',
+  subtitle: 'Join millions of players in intense tactical operations',
+  buttons: [
+    { id: 'btn1', text: 'Play Now', url: '#download', style: 'primary', isPrimary: true },
+    { id: 'btn2', text: 'Watch Trailer', url: '#trailer', style: 'outline', isPrimary: false }
+  ]
+};
+
+const defaultFooterContent: FooterContent = {
+  copyright: `© ${new Date().getFullYear()} BlinkBox. All rights reserved.`,
+  links: [
+    { id: 'link1', text: 'Privacy Policy', url: '/privacy', group: 'legal' },
+    { id: 'link2', text: 'Terms of Service', url: '/terms', group: 'legal' },
+    { id: 'link3', text: 'Contact', url: '/contact', group: 'support' }
+  ]
+};
+
+const defaultBottomButtons: BottomButton[] = [
+  { id: 'bottom1', text: 'Download Now', url: '#download', icon: 'download', position: 'center' },
+  { id: 'bottom2', text: 'Join Discord', url: 'https://discord.gg', icon: 'discord', position: 'right' }
+];
+
 // Admin password - in a real app, this would be server-side authenticated
 const ADMIN_PASSWORD = 'xbakhta2024';
 
@@ -557,6 +697,11 @@ const CONTENT_SESSION_KEY = 'xbakhta_content_session';
 const NAV_SESSION_KEY = 'xbakhta_nav_session';
 const GAME_MODES_KEY = 'xbakhta_game_modes_session';
 const OPERATORS_KEY = 'xbakhta_operators_session';
+const MAPS_KEY = 'xbakhta_maps_session';
+const BATTLE_PASS_KEY = 'xbakhta_battlepass_session';
+const HERO_CONTENT_KEY = 'xbakhta_hero_session';
+const FOOTER_CONTENT_KEY = 'xbakhta_footer_session';
+const BOTTOM_BUTTONS_KEY = 'xbakhta_bottom_buttons_session';
 
 const AdminContext = createContext<AdminContextType>({
   isAdmin: false,
@@ -583,58 +728,57 @@ const AdminContext = createContext<AdminContextType>({
   updateOperator: () => {},
   addOperator: () => {},
   deleteOperator: () => {},
-  maps: [],
+  maps: defaultMaps,
   updateMap: () => {},
   addMap: () => {},
   deleteMap: () => {},
-  battlePass: {
-    currentSeason: 1,
-    endDate: '2024-12-31',
-    tiers: []
-  },
+  battlePass: defaultBattlePass,
   updateBattlePass: () => {},
-  updateBattlePassTier: () => {},
-  footer: {
-    copyright: '© 2024 BlinkBox. All rights reserved.',
-    links: []
-  },
+  heroContent: defaultHeroContent,
+  updateHeroContent: () => {},
+  footerContent: defaultFooterContent,
   updateFooter: () => {},
-  hero: {
-    title: 'Welcome to BlinkBox FPS',
-    subtitle: 'Experience intense tactical combat',
-    backgroundImage: '/images/hero-bg.jpg',
-    buttons: []
-  },
-  updateHero: () => {}
+  bottomButtons: defaultBottomButtons,
+  updateBottomButtons: () => {},
+  premiumRewards: [],
+  freeRewards: [],
+  addReward: () => {},
+  updateReward: () => {},
+  deleteReward: () => {},
+  updateHeroButton: () => {},
+  addHeroButton: () => {},
+  deleteHeroButton: () => {},
+  addFooterLink: () => {},
+  updateFooterLink: () => {},
+  deleteFooterLink: () => {},
+  addBottomButton: () => {},
+  updateBottomButton: () => {},
+  deleteBottomButton: () => {}
 });
 
 export const useAdmin = () => useContext(AdminContext);
 
 export const AdminProvider = ({ children }: { children: ReactNode }) => {
   const [isAdmin, setIsAdmin] = useState(false);
+  const [adminSidebarOpen, setAdminSidebarOpen] = useState(false);
   const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
+
   const [editableContent, setEditableContent] = useState<ContentSections>(defaultContent);
   const [navigationContent, setNavigationContent] = useState<NavigationContent>(defaultNavigation);
   const [gameModes, setGameModes] = useState<GameMode[]>(defaultGameModes);
   const [operators, setOperators] = useState<Operator[]>(defaultOperators);
-  const [adminSidebarOpen, setAdminSidebarOpen] = useState(false);
-  const [isInitialized, setIsInitialized] = useState(false);
-  const [maps, setMaps] = useState<Map[]>([]);
-  const [battlePass, setBattlePass] = useState<BattlePass>({
-    currentSeason: 1,
-    endDate: '2024-12-31',
-    tiers: []
-  });
-  const [footer, setFooter] = useState<Footer>({
-    copyright: '© 2024 BlinkBox. All rights reserved.',
-    links: []
-  });
-  const [hero, setHero] = useState<Hero>({
-    title: 'Welcome to BlinkBox FPS',
-    subtitle: 'Experience intense tactical combat',
-    backgroundImage: '/images/hero-bg.jpg',
-    buttons: []
-  });
+  
+  // Add new state variables
+  const [maps, setMaps] = useState<Map[]>(defaultMaps);
+  const [battlePass, setBattlePass] = useState<BattlePass>(defaultBattlePass);
+  const [heroContent, setHeroContent] = useState<HeroContent>(defaultHeroContent);
+  const [footerContent, setFooterContent] = useState<FooterContent>(defaultFooterContent);
+  const [bottomButtons, setBottomButtons] = useState<BottomButton[]>(defaultBottomButtons);
+  
+  // Add the state variables for premiumRewards and freeRewards after the existing useState declarations
+  const [premiumRewards, setPremiumRewards] = useState<BattlePassReward[]>([]);
+  const [freeRewards, setFreeRewards] = useState<BattlePassReward[]>([]);
   
   // Initialize state from session storage
   useEffect(() => {
@@ -686,7 +830,7 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
       }
       
       // Load saved maps if available
-      const savedMaps = sessionStorage.getItem('xbakhta_maps_session');
+      const savedMaps = sessionStorage.getItem(MAPS_KEY);
       if (savedMaps) {
         try {
           setMaps(JSON.parse(savedMaps));
@@ -696,7 +840,7 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
       }
       
       // Load saved battle pass if available
-      const savedBattlePass = sessionStorage.getItem('xbakhta_battle_pass_session');
+      const savedBattlePass = sessionStorage.getItem(BATTLE_PASS_KEY);
       if (savedBattlePass) {
         try {
           setBattlePass(JSON.parse(savedBattlePass));
@@ -705,23 +849,33 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
         }
       }
       
-      // Load saved footer if available
-      const savedFooter = sessionStorage.getItem('xbakhta_footer_session');
-      if (savedFooter) {
+      // Load saved hero content if available
+      const savedHeroContent = sessionStorage.getItem(HERO_CONTENT_KEY);
+      if (savedHeroContent) {
         try {
-          setFooter(JSON.parse(savedFooter));
+          setHeroContent(JSON.parse(savedHeroContent));
         } catch (err) {
-          console.error('Error parsing saved footer:', err);
+          console.error('Error parsing saved hero content:', err);
         }
       }
       
-      // Load saved hero if available
-      const savedHero = sessionStorage.getItem('xbakhta_hero_session');
-      if (savedHero) {
+      // Load saved footer content if available
+      const savedFooterContent = sessionStorage.getItem(FOOTER_CONTENT_KEY);
+      if (savedFooterContent) {
         try {
-          setHero(JSON.parse(savedHero));
+          setFooterContent(JSON.parse(savedFooterContent));
         } catch (err) {
-          console.error('Error parsing saved hero:', err);
+          console.error('Error parsing saved footer content:', err);
+        }
+      }
+      
+      // Load saved bottom buttons if available
+      const savedBottomButtons = sessionStorage.getItem(BOTTOM_BUTTONS_KEY);
+      if (savedBottomButtons) {
+        try {
+          setBottomButtons(JSON.parse(savedBottomButtons));
+        } catch (err) {
+          console.error('Error parsing saved bottom buttons:', err);
         }
       }
       
@@ -771,30 +925,37 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
   // Save maps to session storage when they change
   useEffect(() => {
     if (isInitialized && typeof window !== 'undefined') {
-      sessionStorage.setItem('xbakhta_maps_session', JSON.stringify(maps));
+      sessionStorage.setItem(MAPS_KEY, JSON.stringify(maps));
     }
   }, [maps, isInitialized]);
   
   // Save battle pass to session storage when it changes
   useEffect(() => {
     if (isInitialized && typeof window !== 'undefined') {
-      sessionStorage.setItem('xbakhta_battle_pass_session', JSON.stringify(battlePass));
+      sessionStorage.setItem(BATTLE_PASS_KEY, JSON.stringify(battlePass));
     }
   }, [battlePass, isInitialized]);
   
-  // Save footer to session storage when it changes
+  // Save hero content to session storage when it changes
   useEffect(() => {
     if (isInitialized && typeof window !== 'undefined') {
-      sessionStorage.setItem('xbakhta_footer_session', JSON.stringify(footer));
+      sessionStorage.setItem(HERO_CONTENT_KEY, JSON.stringify(heroContent));
     }
-  }, [footer, isInitialized]);
+  }, [heroContent, isInitialized]);
   
-  // Save hero to session storage when it changes
+  // Save footer content to session storage when it changes
   useEffect(() => {
     if (isInitialized && typeof window !== 'undefined') {
-      sessionStorage.setItem('xbakhta_hero_session', JSON.stringify(hero));
+      sessionStorage.setItem(FOOTER_CONTENT_KEY, JSON.stringify(footerContent));
     }
-  }, [hero, isInitialized]);
+  }, [footerContent, isInitialized]);
+  
+  // Save bottom buttons to session storage when they change
+  useEffect(() => {
+    if (isInitialized && typeof window !== 'undefined') {
+      sessionStorage.setItem(BOTTOM_BUTTONS_KEY, JSON.stringify(bottomButtons));
+    }
+  }, [bottomButtons, isInitialized]);
   
   // Called when user successfully enters the key sequence
   const handleSequenceDetected = () => {
@@ -836,22 +997,11 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
     setNavigationContent(defaultNavigation);
     setGameModes(defaultGameModes);
     setOperators(defaultOperators);
-    setMaps([]);
-    setBattlePass({
-      currentSeason: 1,
-      endDate: '2024-12-31',
-      tiers: []
-    });
-    setFooter({
-      copyright: '© 2024 BlinkBox. All rights reserved.',
-      links: []
-    });
-    setHero({
-      title: 'Welcome to BlinkBox FPS',
-      subtitle: 'Experience intense tactical combat',
-      backgroundImage: '/images/hero-bg.jpg',
-      buttons: []
-    });
+    setMaps(defaultMaps);
+    setBattlePass(defaultBattlePass);
+    setHeroContent(defaultHeroContent);
+    setFooterContent(defaultFooterContent);
+    setBottomButtons(defaultBottomButtons);
     
     // Also update session storage
     if (typeof window !== 'undefined') {
@@ -859,22 +1009,11 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
       sessionStorage.setItem(NAV_SESSION_KEY, JSON.stringify(defaultNavigation));
       sessionStorage.setItem(GAME_MODES_KEY, JSON.stringify(defaultGameModes));
       sessionStorage.setItem(OPERATORS_KEY, JSON.stringify(defaultOperators));
-      sessionStorage.setItem('xbakhta_maps_session', JSON.stringify([]));
-      sessionStorage.setItem('xbakhta_battle_pass_session', JSON.stringify({
-        currentSeason: 1,
-        endDate: '2024-12-31',
-        tiers: []
-      }));
-      sessionStorage.setItem('xbakhta_footer_session', JSON.stringify({
-        copyright: '© 2024 BlinkBox. All rights reserved.',
-        links: []
-      }));
-      sessionStorage.setItem('xbakhta_hero_session', JSON.stringify({
-        title: 'Welcome to BlinkBox FPS',
-        subtitle: 'Experience intense tactical combat',
-        backgroundImage: '/images/hero-bg.jpg',
-        buttons: []
-      }));
+      sessionStorage.setItem(MAPS_KEY, JSON.stringify(defaultMaps));
+      sessionStorage.setItem(BATTLE_PASS_KEY, JSON.stringify(defaultBattlePass));
+      sessionStorage.setItem(HERO_CONTENT_KEY, JSON.stringify(defaultHeroContent));
+      sessionStorage.setItem(FOOTER_CONTENT_KEY, JSON.stringify(defaultFooterContent));
+      sessionStorage.setItem(BOTTOM_BUTTONS_KEY, JSON.stringify(defaultBottomButtons));
     }
   };
   
@@ -1029,81 +1168,196 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
     };
-  }, [isAdmin]);
+  }, [isAdmin, handleSequenceDetected]);
   
+  // Add to the bottom of the file, before the final return statement
   const updateMap = (id: string, data: Partial<Map>) => {
-    setMaps(maps.map(map => map.id === id ? { ...map, ...data } : map));
+    setMaps(prev => prev.map(map => map.id === id ? { ...map, ...data } : map));
   };
 
   const addMap = (map: Map) => {
-    setMaps([...maps, map]);
+    setMaps(prev => [...prev, map]);
   };
 
   const deleteMap = (id: string) => {
-    setMaps(maps.filter(map => map.id !== id));
+    setMaps(prev => prev.filter(map => map.id !== id));
   };
 
   const updateBattlePass = (data: Partial<BattlePass>) => {
-    setBattlePass({ ...battlePass, ...data });
+    setBattlePass(prev => ({ ...prev, ...data }));
   };
 
-  const updateBattlePassTier = (level: number, data: Partial<BattlePassTier>) => {
-    setBattlePass({
-      ...battlePass,
-      tiers: battlePass.tiers.map(tier => 
-        tier.level === level ? { ...tier, ...data } : tier
+  const updateHeroContent = (data: Partial<HeroContent>) => {
+    setHeroContent(prev => ({ ...prev, ...data }));
+  };
+
+  const updateFooter = (data: Partial<FooterContent>) => {
+    setFooterContent(prev => ({ ...prev, ...data }));
+  };
+
+  const updateBottomButtons = (buttons: BottomButton[]) => {
+    setBottomButtons(buttons);
+  };
+  
+  const addReward = (reward: BattlePassReward) => {
+    if (reward.isPremium) {
+      setPremiumRewards(prev => [...prev, reward]);
+    } else {
+      setFreeRewards(prev => [...prev, reward]);
+    }
+  };
+
+  const updateReward = (id: string, data: Partial<BattlePassReward>) => {
+    // If isPremium status changed, we need to move the reward between arrays
+    if (data.isPremium !== undefined) {
+      if (data.isPremium) {
+        // Moving to premium
+        const reward = freeRewards.find(r => r.id === id);
+        if (reward) {
+          const updatedReward = { ...reward, ...data };
+          setFreeRewards(prev => prev.filter(r => r.id !== id));
+          setPremiumRewards(prev => [...prev, updatedReward]);
+        }
+      } else {
+        // Moving to free
+        const reward = premiumRewards.find(r => r.id === id);
+        if (reward) {
+          const updatedReward = { ...reward, ...data };
+          setPremiumRewards(prev => prev.filter(r => r.id !== id));
+          setFreeRewards(prev => [...prev, updatedReward]);
+        }
+      }
+    } else {
+      // Just updating properties without changing premium status
+      setPremiumRewards(prev => 
+        prev.map(r => r.id === id ? { ...r, ...data } : r)
+      );
+      setFreeRewards(prev => 
+        prev.map(r => r.id === id ? { ...r, ...data } : r)
+      );
+    }
+  };
+
+  const deleteReward = (id: string) => {
+    setPremiumRewards(prev => prev.filter(r => r.id !== id));
+    setFreeRewards(prev => prev.filter(r => r.id !== id));
+  };
+
+  const updateHeroButton = (id: string, data: Partial<HeroButton>) => {
+    setHeroContent(prev => ({
+      ...prev,
+      buttons: prev.buttons.map(btn => 
+        btn.id === id ? { ...btn, ...data } : btn
       )
-    });
+    }));
   };
 
-  const updateFooter = (data: Partial<Footer>) => {
-    setFooter({ ...footer, ...data });
+  const addHeroButton = (button: HeroButton) => {
+    setHeroContent(prev => ({
+      ...prev,
+      buttons: [...prev.buttons, button]
+    }));
   };
 
-  const updateHero = (data: Partial<Hero>) => {
-    setHero({ ...hero, ...data });
+  const deleteHeroButton = (id: string) => {
+    setHeroContent(prev => ({
+      ...prev,
+      buttons: prev.buttons.filter(btn => btn.id !== id)
+    }));
   };
 
-  const value = {
-    isAdmin, 
-    toggleAdmin, 
-    editableContent, 
-    updateContent, 
-    resetContent,
-    adminSidebarOpen,
-    toggleAdminSidebar,
-    isPasswordDialogOpen,
-    closePasswordDialog,
-    verifyPassword,
-    navigationContent,
-    updateNavigation,
-    updateMenuItem,
-    updateSocialLink,
-    updateSupportLink,
-    logoutAdmin,
-    gameModes,
-    updateGameMode,
-    addGameMode,
-    deleteGameMode,
-    operators,
-    updateOperator,
-    addOperator,
-    deleteOperator,
-    maps,
-    updateMap,
-    addMap,
-    deleteMap,
-    battlePass,
-    updateBattlePass,
-    updateBattlePassTier,
-    footer,
-    updateFooter,
-    hero,
-    updateHero,
+  const addFooterLink = (link: FooterLink) => {
+    setFooterContent(prev => ({
+      ...prev,
+      links: [...prev.links, link]
+    }));
   };
 
+  const updateFooterLink = (id: string, data: Partial<FooterLink>) => {
+    setFooterContent(prev => ({
+      ...prev,
+      links: prev.links.map(link => 
+        link.id === id ? { ...link, ...data } : link
+      )
+    }));
+  };
+
+  const deleteFooterLink = (id: string) => {
+    setFooterContent(prev => ({
+      ...prev,
+      links: prev.links.filter(link => link.id !== id)
+    }));
+  };
+
+  const addBottomButton = (button: BottomButton) => {
+    setBottomButtons(prev => [...prev, button]);
+  };
+
+  const updateBottomButton = (id: string, data: Partial<BottomButton>) => {
+    setBottomButtons(prev => 
+      prev.map(btn => btn.id === id ? { ...btn, ...data } : btn)
+    );
+  };
+
+  const deleteBottomButton = (id: string) => {
+    setBottomButtons(prev => prev.filter(btn => btn.id !== id));
+  };
+  
   return (
-    <AdminContext.Provider value={value}>
+    <AdminContext.Provider 
+      value={{ 
+        isAdmin, 
+        toggleAdmin, 
+        editableContent, 
+        updateContent, 
+        resetContent,
+        adminSidebarOpen,
+        toggleAdminSidebar,
+        isPasswordDialogOpen,
+        closePasswordDialog,
+        verifyPassword,
+        navigationContent,
+        updateNavigation,
+        updateMenuItem,
+        updateSocialLink,
+        updateSupportLink,
+        logoutAdmin,
+        gameModes,
+        updateGameMode,
+        addGameMode,
+        deleteGameMode,
+        operators,
+        updateOperator,
+        addOperator,
+        deleteOperator,
+        maps,
+        updateMap,
+        addMap,
+        deleteMap,
+        battlePass,
+        updateBattlePass,
+        heroContent,
+        updateHeroContent,
+        footerContent,
+        updateFooter,
+        bottomButtons,
+        updateBottomButtons,
+        premiumRewards,
+        freeRewards,
+        addReward,
+        updateReward,
+        deleteReward,
+        updateHeroButton,
+        addHeroButton,
+        deleteHeroButton,
+        addFooterLink,
+        updateFooterLink,
+        deleteFooterLink,
+        addBottomButton,
+        updateBottomButton,
+        deleteBottomButton
+      }}
+    >
       {children}
     </AdminContext.Provider>
   );
