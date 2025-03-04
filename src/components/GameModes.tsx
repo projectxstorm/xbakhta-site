@@ -122,10 +122,10 @@ const GameModes = () => {
           
           <div className="flex flex-wrap items-center gap-y-2 gap-x-4 text-xs">
             <div className="flex items-center text-gray-400">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
-              </svg>
-              {mode.players}
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
+            </svg>
+            {mode.players}
             </div>
             
             {isDetailed && mode.mapCount && (
@@ -169,7 +169,7 @@ const GameModes = () => {
   return (
     <div className="py-8">
       {focusedMode ? (
-        <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4">
           <div className="mb-8 flex items-center">
             <button 
               onClick={() => setFocusedMode(null)}
@@ -226,9 +226,9 @@ const GameModes = () => {
                 </svg>
                 Launch Mode
               </button>
-            </div>
           </div>
-          
+        </div>
+
           <div className="mt-12">
             <h3 className="text-2xl font-bold mb-6">Similar Game Modes</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -237,10 +237,10 @@ const GameModes = () => {
                 .filter(mode => mode.objectiveType === focusedMode.objectiveType || mode.difficulty === focusedMode.difficulty)
                 .slice(0, 3)
                 .map((mode, index) => (
-                  <GameModeCard key={index} mode={mode} />
-                ))}
-            </div>
+              <GameModeCard key={index} mode={mode} />
+            ))}
           </div>
+        </div>
         </div>
       ) : (
         <div className="container mx-auto px-4">
@@ -286,9 +286,9 @@ const GameModes = () => {
               >
                 Custom
               </button>
-            </div>
           </div>
-          
+        </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {displayModes().map((mode, index) => (
               <GameModeCard key={index} mode={mode} />
@@ -296,7 +296,7 @@ const GameModes = () => {
           </div>
         </div>
       )}
-    </div>
+      </div>
   )
 }
 
