@@ -245,7 +245,7 @@ const defaultContent: ContentSections = {
 };
 
 const defaultNavigation: NavigationContent = {
-  studioName: 'BlinkBox',
+  studioName: 'Xbakhta',
   tagline: 'TACTICAL SHOOTER',
   menuItems: [
     { id: 'modes', label: 'MODES', href: '#game-modes', enabled: true },
