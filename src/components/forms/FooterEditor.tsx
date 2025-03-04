@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useAdmin } from '@/app/context/AdminContext';
-import { FooterContent, FooterLink } from '@/app/context/AdminContext';
+import { FooterLink } from '@/app/context/AdminContext';
 
 // Icons
 import { Plus as PlusIcon, X as CloseIcon, Edit as EditIcon, Trash as TrashIcon } from 'lucide-react';
