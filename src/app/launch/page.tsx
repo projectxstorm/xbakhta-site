@@ -4,10 +4,12 @@ import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useAdmin } from '@/app/context/AdminContext'
-import { Calendar, Timer, ArrowRight, ArrowLeft } from 'lucide-react'
+import { Calendar, Timer, ArrowRight, ArrowLeft, Settings } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 
 const LaunchPage = () => {
   const { launchSettings, footerContent } = useAdmin();
+  const router = useRouter();
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
     hours: 0,
@@ -17,7 +19,14 @@ const LaunchPage = () => {
   
   const [isLaunched, setIsLaunched] = useState(false);
   const [logoError, setLogoError] = useState(false);
+  const [showAdminOptions, setShowAdminOptions] = useState(false);
   
+  // Function to bypass redirect
+  const bypassRedirect = () => {
+    document.cookie = "bypassLaunchRedirect=true;path=/;max-age=604800"; // 7 days
+    router.push('/?bypassRedirect=true');
+  };
+
   // Calculate time remaining
   useEffect(() => {
     if (!launchSettings.launchDate) return;
@@ -171,6 +180,27 @@ const LaunchPage = () => {
           <p className="text-center text-gray-400 text-sm">
             {footerContent.copyright || `© ${new Date().getFullYear()} BlinkBox. All rights reserved.`}
           </p>
+          
+          {/* Admin section with bypass button */}
+          <div className="mt-6 flex flex-col items-center">
+            <button 
+              onClick={() => setShowAdminOptions(!showAdminOptions)}
+              className="px-2 py-1 bg-black/30 hover:bg-black/50 text-gray-400 rounded-md text-xs flex items-center"
+            >
+              <Settings size={12} className="mr-1" /> Admin
+            </button>
+            
+            {showAdminOptions && (
+              <div className="mt-2 bg-black/70 backdrop-blur-md p-4 rounded-xl border border-gray-700 w-full max-w-xs">
+                <button 
+                  onClick={bypassRedirect}
+                  className="w-full px-3 py-2 bg-indigo-900/50 hover:bg-indigo-800 text-white rounded-md text-sm flex items-center justify-center"
+                >
+                  Access Main Site
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </footer>
     </div>

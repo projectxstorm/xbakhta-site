@@ -1,7 +1,8 @@
 'use client'
 
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react'
-import { saveToJsonFile, loadFromJsonFile } from '../utils/dataUtils';
+import { saveToJsonFile as saveToJsonFileUtil, loadFromJsonFile } from '../utils/dataUtils';
+import { useToast } from './ToastContext';
 
 interface SectionContent {
   title: string;
@@ -227,13 +228,14 @@ type AdminContextType = {
   addBottomButton: (button: BottomButton) => void;
   updateBottomButton: (id: string, data: Partial<BottomButton>) => void;
   deleteBottomButton: (id: string) => void;
-  saveToJsonFile: <T>(type: string, content: T) => Promise<void>;
+  saveToJsonFile: <T>(type: string, content: T) => Promise<{success: boolean, message: string}>;
   loadFromJsonFile: <T>(type: string) => Promise<T | null>;
   saveAllData: () => Promise<void>;
   loadAllData: () => Promise<void>;
   launchSettings: LaunchSettings;
   updateLaunchSettings: (data: Partial<LaunchSettings>) => void;
   toggleLaunchMode: () => void;
+  refreshData: () => void;
 }
 
 const defaultContent: ContentSections = {
@@ -784,18 +786,21 @@ const AdminContext = createContext<AdminContextType>({
   addBottomButton: () => {},
   updateBottomButton: () => {},
   deleteBottomButton: () => {},
-  saveToJsonFile: async () => Promise.resolve(),
+  saveToJsonFile: async () => Promise.resolve({success: false, message: 'Not implemented'}),
   loadFromJsonFile: async () => Promise.resolve(null),
   saveAllData: async () => Promise.resolve(),
   loadAllData: async () => Promise.resolve(),
   launchSettings: defaultLaunchSettings,
   updateLaunchSettings: () => {},
   toggleLaunchMode: () => {},
+  refreshData: () => {},
 });
 
 export const useAdmin = () => useContext(AdminContext);
 
 export const AdminProvider = ({ children }: { children: ReactNode }) => {
+  // Get toast functions from context
+  const { showToast } = useToast();
   const [isAdmin, setIsAdmin] = useState(false);
   const [adminSidebarOpen, setAdminSidebarOpen] = useState(false);
   const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
@@ -820,70 +825,137 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
   // Add this with the other state variables
   const [launchSettings, setLaunchSettings] = useState<LaunchSettings>(defaultLaunchSettings);
   
-  // Function to save all data to JSON files
-  const saveAllData = async () => {
-    try {
-      await saveToJsonFile('content', editableContent);
-      await saveToJsonFile('navigation', navigationContent);
-      await saveToJsonFile('gameModes', gameModes);
-      await saveToJsonFile('operators', operators);
-      await saveToJsonFile('maps', maps);
-      await saveToJsonFile('battlePass', battlePass);
-      await saveToJsonFile('premiumRewards', premiumRewards);
-      await saveToJsonFile('freeRewards', freeRewards);
-      await saveToJsonFile('heroContent', heroContent);
-      await saveToJsonFile('footerContent', footerContent);
-      await saveToJsonFile('bottomButtons', bottomButtons);
-      await saveToJsonFile('launchSettings', launchSettings);
-      
-      console.log('All data saved to JSON files');
-    } catch (error) {
-      console.error('Error saving all data:', error);
+  // Add a timestamp state to track when data was last loaded
+  const [lastLoadTime, setLastLoadTime] = useState<number>(0);
+  
+  // Create a helper function to show toasts only for admins
+  const showAdminToast = (message: string, type: 'success' | 'error' | 'info' | 'warning') => {
+    if (isAdmin) {
+      showToast(message, type);
     }
   };
   
-  // Function to load all data from JSON files
-  const loadAllData = async () => {
+  // Function to save all data to JSON files
+  const saveAllData = async () => {
     try {
-      const contentData = await loadFromJsonFile<ContentSections>('content');
-      if (contentData) setEditableContent(contentData);
+      // Show initial toast that saving has started
+      showAdminToast('Saving all data...', 'info');
       
-      const navigationData = await loadFromJsonFile<NavigationContent>('navigation');
-      if (navigationData) setNavigationContent(navigationData);
+      // Save all content
+      let hasError = false;
+      const errorMessages: string[] = [];
+      const successMessages: string[] = [];
       
-      const gameModesData = await loadFromJsonFile<GameMode[]>('gameModes');
-      if (gameModesData) setGameModes(gameModesData);
+      const saveWithToast = async <T,>(type: string, content: T) => {
+        try {
+          console.log(`Saving ${type} data...`);
+          const result = await saveToJsonFileUtil(type, content);
+          if (!result.success) {
+            hasError = true;
+            errorMessages.push(result.message);
+          } else {
+            successMessages.push(`${type} saved successfully`);
+          }
+          return result;
+        } catch (error) {
+          hasError = true;
+          const errorMessage = `Error saving ${type}: ${error instanceof Error ? error.message : 'Unknown error'}`;
+          errorMessages.push(errorMessage);
+          return { success: false, message: errorMessage };
+        }
+      };
       
-      const operatorsData = await loadFromJsonFile<Operator[]>('operators');
-      if (operatorsData) setOperators(operatorsData);
+      // Use Promise.all to save all data concurrently
+      await Promise.all([
+        saveWithToast('content', editableContent),
+        saveWithToast('navigation', navigationContent),
+        saveWithToast('gameModes', gameModes),
+        saveWithToast('operators', operators),
+        saveWithToast('maps', maps),
+        saveWithToast('battlePass', battlePass),
+        saveWithToast('premiumRewards', premiumRewards),
+        saveWithToast('freeRewards', freeRewards),
+        saveWithToast('heroContent', heroContent),
+        saveWithToast('footerContent', footerContent),
+        saveWithToast('bottomButtons', bottomButtons),
+        saveWithToast('launchSettings', launchSettings)
+      ]);
       
-      const mapsData = await loadFromJsonFile<Map[]>('maps');
-      if (mapsData) setMaps(mapsData);
+      if (hasError) {
+        showAdminToast(`Some data could not be saved. Check console for details.`, 'warning');
+        console.error('Errors saving data:', errorMessages);
+        console.log('Successfully saved:', successMessages);
+      } else {
+        showAdminToast('All data saved successfully', 'success');
+        console.log('All data saved to JSON files');
+      }
+    } catch (error) {
+      console.error('Error in saveAllData:', error);
+      showAdminToast(`Error saving all data: ${error instanceof Error ? error.message : 'Unknown error'}`, 'error');
+    }
+  };
+  
+  // Update the loadAllData function to track loading time
+  const loadAllData = async (forceReload = false) => {
+    try {
+      // Check if we've loaded data recently (within the last 5 minutes) and not forcing reload
+      const now = Date.now();
+      if (!forceReload && lastLoadTime > 0 && now - lastLoadTime < 5 * 60 * 1000) {
+        console.log('Using cached data (loaded within the last 5 minutes)');
+        showAdminToast('Using cached data', 'info');
+        return;
+      }
       
-      const battlePassData = await loadFromJsonFile<BattlePass>('battlePass');
-      if (battlePassData) setBattlePass(battlePassData);
+      showAdminToast('Loading data...', 'info');
       
-      const premiumRewardsData = await loadFromJsonFile<BattlePassReward[]>('premiumRewards');
-      if (premiumRewardsData) setPremiumRewards(premiumRewardsData);
+      // More detailed error handling for each data type
+      const loadWithToast = async <T,>(type: string, setter: (data: T) => void, defaultData?: T) => {
+        try {
+          const data = await loadFromJsonFile<T>(type);
+          if (data) {
+            setter(data);
+            return true;
+          } else if (defaultData) {
+            setter(defaultData);
+            return false;
+          }
+          return false;
+        } catch (error) {
+          console.error(`Error loading ${type} data:`, error);
+          return false;
+        }
+      };
       
-      const freeRewardsData = await loadFromJsonFile<BattlePassReward[]>('freeRewards');
-      if (freeRewardsData) setFreeRewards(freeRewardsData);
+      // Array to track loading results
+      const loadResults = await Promise.all([
+        loadWithToast('content', setEditableContent, defaultContent),
+        loadWithToast('navigation', setNavigationContent, defaultNavigation),
+        loadWithToast('gameModes', setGameModes, []),
+        loadWithToast('operators', setOperators, []),
+        loadWithToast('maps', setMaps, []),
+        loadWithToast('battlePass', setBattlePass, defaultBattlePass),
+        loadWithToast('premiumRewards', setPremiumRewards, []),
+        loadWithToast('freeRewards', setFreeRewards, []),
+        loadWithToast('heroContent', setHeroContent, defaultHeroContent),
+        loadWithToast('footerContent', setFooterContent, defaultFooterContent),
+        loadWithToast('bottomButtons', setBottomButtons, []),
+        loadWithToast('launchSettings', setLaunchSettings, defaultLaunchSettings)
+      ]);
       
-      const heroContentData = await loadFromJsonFile<HeroContent>('heroContent');
-      if (heroContentData) setHeroContent(heroContentData);
+      // Update the last load time
+      setLastLoadTime(now);
       
-      const footerContentData = await loadFromJsonFile<FooterContent>('footerContent');
-      if (footerContentData) setFooterContent(footerContentData);
+      const allSuccessful = loadResults.every(Boolean);
+      if (allSuccessful) {
+        showAdminToast('All data loaded successfully', 'success');
+      } else {
+        showAdminToast('Some data could not be loaded. Using defaults where needed.', 'warning');
+      }
       
-      const bottomButtonsData = await loadFromJsonFile<BottomButton[]>('bottomButtons');
-      if (bottomButtonsData) setBottomButtons(bottomButtonsData);
-      
-      const launchSettingsData = await loadFromJsonFile<LaunchSettings>('launchSettings');
-      if (launchSettingsData) setLaunchSettings(launchSettingsData);
-      
-      console.log('All data loaded from JSON files');
+      console.log('Data loading completed');
     } catch (error) {
       console.error('Error loading all data:', error);
+      showAdminToast('Error loading data. Some features may not work correctly.', 'error');
     }
   };
   
@@ -899,10 +971,7 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
       // Load data from JSON files
       loadAllData().then(() => {
         setIsInitialized(true);
-        console.log('Admin context initialized with data from JSON files');
-      }).catch(error => {
-        console.error('Error loading initial data from JSON files:', error);
-        setIsInitialized(true); // Still set as initialized even if there's an error
+        console.log('Admin context initialized');
       });
     }
   }, [isInitialized]);
@@ -1327,90 +1396,28 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
     setBottomButtons(prev => prev.filter(btn => btn.id !== id));
   };
   
-  // Add auto-save to JSON files when state changes
-  useEffect(() => {
-    if (isInitialized) {
-      saveToJsonFile('content', editableContent);
-    }
-  }, [editableContent, isInitialized]);
-  
-  useEffect(() => {
-    if (isInitialized) {
-      saveToJsonFile('navigation', navigationContent);
-    }
-  }, [navigationContent, isInitialized]);
-  
-  useEffect(() => {
-    if (isInitialized) {
-      saveToJsonFile('gameModes', gameModes);
-    }
-  }, [gameModes, isInitialized]);
-  
-  useEffect(() => {
-    if (isInitialized) {
-      saveToJsonFile('operators', operators);
-    }
-  }, [operators, isInitialized]);
-  
-  useEffect(() => {
-    if (isInitialized) {
-      saveToJsonFile('maps', maps);
-    }
-  }, [maps, isInitialized]);
-  
-  useEffect(() => {
-    if (isInitialized) {
-      saveToJsonFile('battlePass', battlePass);
-    }
-  }, [battlePass, isInitialized]);
-  
-  useEffect(() => {
-    if (isInitialized) {
-      saveToJsonFile('premiumRewards', premiumRewards);
-    }
-  }, [premiumRewards, isInitialized]);
-  
-  useEffect(() => {
-    if (isInitialized) {
-      saveToJsonFile('freeRewards', freeRewards);
-    }
-  }, [freeRewards, isInitialized]);
-  
-  useEffect(() => {
-    if (isInitialized) {
-      saveToJsonFile('heroContent', heroContent);
-    }
-  }, [heroContent, isInitialized]);
-  
-  useEffect(() => {
-    if (isInitialized) {
-      saveToJsonFile('footerContent', footerContent);
-    }
-  }, [footerContent, isInitialized]);
-  
-  useEffect(() => {
-    if (isInitialized) {
-      saveToJsonFile('bottomButtons', bottomButtons);
-    }
-  }, [bottomButtons, isInitialized]);
-  
-  // Add autosave effect for launch settings
-  useEffect(() => {
-    if (isInitialized) {
-      saveToJsonFile('launchSettings', launchSettings);
-    }
-  }, [launchSettings, isInitialized]);
-  
   // Add these functions to handle launch settings
   const updateLaunchSettings = (data: Partial<LaunchSettings>) => {
     setLaunchSettings(prev => ({ ...prev, ...data }));
   };
   
   const toggleLaunchMode = () => {
+    const newState = !launchSettings.isActive;
     setLaunchSettings(prev => ({ 
       ...prev, 
-      isActive: !prev.isActive 
+      isActive: newState 
     }));
+    
+    showAdminToast(
+      `Launch mode ${newState ? 'activated' : 'deactivated'} (not saved yet)`, 
+      'info'
+    );
+    showAdminToast('Click "Save All" to apply changes', 'warning');
+  };
+  
+  // Add a refresh function that forces data reload
+  const refreshData = () => {
+    loadAllData(true);
   };
   
   return (
@@ -1466,13 +1473,14 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
         addBottomButton,
         updateBottomButton,
         deleteBottomButton,
-        saveToJsonFile,
+        saveToJsonFile: saveToJsonFileUtil,
         loadFromJsonFile,
         saveAllData,
         loadAllData,
         launchSettings,
         updateLaunchSettings,
-        toggleLaunchMode
+        toggleLaunchMode,
+        refreshData
       }}
     >
       {children}

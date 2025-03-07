@@ -13,6 +13,14 @@ const LaunchSettingsEditor = () => {
       <div className="space-y-4">
         <h3 className="text-sm font-semibold text-yellow-400 mb-2">LAUNCH MODE SETTINGS</h3>
         
+        {/* Add a note about saving changes */}
+        <div className="p-3 border border-blue-600/30 bg-blue-900/20 rounded text-sm flex items-center gap-2 mb-4">
+          <AlertTriangle className="h-4 w-4 text-blue-500" />
+          <span className="text-blue-400">
+            Changes to launch settings are not saved automatically. Click "Save All Changes" in the Settings tab when done.
+          </span>
+        </div>
+        
         {/* Launch Mode Toggle */}
         <div className="p-4 bg-gray-800/50 rounded-md border border-gray-700/50 flex flex-col space-y-4">
           <div className="flex items-center justify-between">

@@ -10,7 +10,8 @@ import {
   Trash2 as TrashIcon,
   Star as StarIcon,
   Tag as NewIcon,
-  Save as SaveIcon
+  Save as SaveIcon,
+  RefreshCw as RefreshIcon
 } from 'lucide-react'
 
 // Import our separate editor components
@@ -1190,7 +1191,16 @@ const OperatorForm = ({
 };
 
 const AdminSidebar = () => {
-  const { isAdmin, editableContent, adminSidebarOpen, toggleAdminSidebar, logoutAdmin, navigationContent, saveAllData } = useAdmin();
+  const { 
+    isAdmin, 
+    editableContent, 
+    adminSidebarOpen, 
+    toggleAdminSidebar, 
+    logoutAdmin, 
+    navigationContent, 
+    saveAllData,
+    refreshData
+  } = useAdmin();
   const [activeTab, setActiveTab] = useState('sections');
 
   if (!isAdmin) return null;
@@ -1257,17 +1267,29 @@ const AdminSidebar = () => {
               <p className="text-xs text-gray-300 mb-2">
                 Your admin session will remain active until you log out or close the browser.
               </p>
+              <p className="text-xs text-gray-300 mb-2">
+                Content changes are only saved when you click the "Save All" button.
+              </p>
               <p className="text-xs text-gray-300">
-                All content changes are saved to your session automatically.
+                Data is loaded once per session. Use "Refresh Data" to reload from server.
               </p>
             </div>
             
-            <div>
+            <div className="flex gap-3">
               <button
                 onClick={() => saveAllData()}
-                className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center"
               >
-                Save All
+                <SaveIcon size={16} className="mr-1" />
+                Save All Changes
+              </button>
+              
+              <button
+                onClick={() => refreshData()}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center"
+              >
+                <RefreshIcon size={16} className="mr-1" />
+                Refresh Data
               </button>
             </div>
           </div>

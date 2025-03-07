@@ -3,9 +3,11 @@ import { Inter, Chakra_Petch } from "next/font/google";
 import "./globals.css";
 import { AdminProvider } from "./context/AdminContext";
 import { LaunchProvider } from "./context/LaunchContext";
+import { ToastProvider } from "./context/ToastContext";
 import AdminSidebar from "@/components/AdminSidebar";
 import AdminStatusIndicator from "@/components/AdminStatusIndicator";
 import AdminPasswordDialog from '@/components/AdminPasswordDialog';
+import ToastContainerWrapper from "@/components/ToastContainerWrapper";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const chakraPetch = Chakra_Petch({
@@ -27,14 +29,17 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} ${chakraPetch.variable} font-sans`}>
-        <AdminProvider>
-          <LaunchProvider>
-            {children}
-            <AdminSidebar />
-            <AdminStatusIndicator />
-            <AdminPasswordDialog />
-          </LaunchProvider>
-        </AdminProvider>
+        <ToastProvider>
+          <AdminProvider>
+            <LaunchProvider>
+              {children}
+              <AdminSidebar />
+              <AdminStatusIndicator />
+              <AdminPasswordDialog />
+            </LaunchProvider>
+          </AdminProvider>
+          <ToastContainerWrapper />
+        </ToastProvider>
       </body>
     </html>
   );

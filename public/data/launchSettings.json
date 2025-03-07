@@ -1,10 +1,10 @@
 {
-  "isActive": false,
-  "launchDate": "2025-03-14T21:00:06.113Z",
-  "redirectToLaunch": false,
+  "isActive": true,
+  "launchDate": "2025-03-29T03:08",
+  "redirectToLaunch": true,
   "title": "Game Launch Countdown",
   "subtitle": "Get ready for the ultimate tactical experience",
-  "backgroundImage": "/images/backgrounds/launch-bg.jpg",
+  "backgroundImage": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi3dGT7GUjLjub98aE5mmymDXkueaRXTr6_swNeecDlsgRx_QKk82MrhZGMhlDcpeDEAN7V3V_2wDWCoI7MrPbuypMUCcmtrAgnf8LnVCP4SjqnUK3yZDDeWJY4uAJBn3wNmyrDJaVS8i3N/w919/far-cry-6-fps-game-uhdpaper.com-4K-7.2220-wp.thumbnail.jpg",
   "logoImage": "",
   "gameName": "MFPS Tactical"
 }

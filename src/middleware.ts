@@ -10,6 +10,29 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
   
+  // Check for bypass parameter in URL (?bypassRedirect=true) 
+  // This allows direct access to the site from external links
+  const bypassRedirect = request.nextUrl.searchParams.get('bypassRedirect') === 'true';
+  
+  // Check for bypass cookie (can be set by the admin interface)
+  // This allows persistent access to the site after initial bypass
+  const bypassCookie = request.cookies.get('bypassLaunchRedirect');
+  
+  // If either bypass mechanism is present, don't redirect
+  if (bypassRedirect || bypassCookie?.value === 'true') {
+    // If using the URL parameter, set a cookie to remember the choice
+    // This way the user doesn't need the parameter in the URL for future visits
+    if (bypassRedirect) {
+      const response = NextResponse.next();
+      response.cookies.set('bypassLaunchRedirect', 'true', {
+        maxAge: 60 * 60 * 24 * 7, // 1 week
+        path: '/',
+      });
+      return response;
+    }
+    return NextResponse.next();
+  }
+  
   try {
     // Read launch settings from the API route
     const launchSettingsResponse = await fetch(new URL('/api/data?type=launchSettings', request.url));
