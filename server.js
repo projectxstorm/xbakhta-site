@@ -1,30 +1,39 @@
-const express = require('express');
-const path = require('path');
-const compression = require('compression');
-const app = express();
+import express from 'express';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import compression from 'compression';
+import { parse } from 'url';
+import next from 'next';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const dev = process.env.NODE_ENV !== 'production';
+const app = next({ dev });
+const handle = app.getRequestHandler();
 const port = process.env.PORT || 3000;
 
-// Enable gzip compression for faster loading
-app.use(compression());
+app.prepare().then(() => {
+  const server = express();
 
-// Serve static files from the 'out' directory
-app.use(express.static(path.join(__dirname, 'out')));
+  // Enable gzip compression for faster loading
+  server.use(compression());
 
-// Route all requests to the relevant files in 'out'
-app.get('*', (req, res) => {
-  // Check if the path exists in the 'out' directory
-  const filePath = path.join(__dirname, 'out', req.path);
-  
-  // Try to serve the exact path first
-  res.sendFile(filePath, (err) => {
-    if (err) {
-      // If file not found, serve index.html for client-side routing
-      res.sendFile(path.join(__dirname, 'out', 'index.html'));
-    }
+  // Serve static files from the public directory
+  server.use(express.static(path.join(__dirname, 'public')));
+
+  // Handle API routes and NextJS pages
+  server.all('*', (req, res) => {
+    const parsedUrl = parse(req.url, true);
+    handle(req, res, parsedUrl);
   });
-});
 
-// Start the server
-app.listen(port, () => {
-  console.log(`BlinkBox server running on port ${port}`);
+  // Start the server
+  server.listen(port, (err) => {
+    if (err) throw err;
+    console.log(`BlinkBox server running on port ${port}`);
+  });
+}).catch(err => {
+  console.error('Error starting server:', err);
+  process.exit(1);
 }); 

@@ -1,8 +1,10 @@
 {
-  "isActive": true,
-  "launchDate": "2025-03-15T23:50",
-  "redirectToLaunch": true,
+  "isActive": false,
+  "launchDate": "2025-03-14T21:00:06.113Z",
+  "redirectToLaunch": false,
   "title": "Game Launch Countdown",
   "subtitle": "Get ready for the ultimate tactical experience",
-  "backgroundImage": "https://static0.hardcoregamerimages.com/wordpress/wp-content/uploads/2024/07/hg-fps.jpg"
+  "backgroundImage": "/images/backgrounds/launch-bg.jpg",
+  "logoImage": "",
+  "gameName": "MFPS Tactical"
 }

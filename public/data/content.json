@@ -1,26 +1,26 @@
 {
   "welcome": {
     "title": "Welcome to MFPS Tactical",
-    "description": "The ultimate team-based tactical FPS experience on mobile and desktop - Loaded from JSON"
+    "description": "The ultimate team-based tactical FPS experience on mobile and desktop"
   },
   "gameModes": {
     "title": "Game Modes",
-    "description": "Multiple ways to play, from fast-paced action to strategic operations - Loaded from JSON"
+    "description": "Multiple ways to play, from fast-paced action to strategic operations"
   },
   "operators": {
     "title": "Operators",
-    "description": "Choose your role with unique specialists designed for different playstyles - Loaded from JSON"
+    "description": "Choose your role with unique specialists designed for different playstyles"
   },
   "maps": {
     "title": "Battlegrounds",
-    "description": "Fight across diverse tactical environments from around the world - Loaded from JSON"
+    "description": "Fight across diverse tactical environments from around the world"
   },
   "battlePass": {
     "title": "BATTLE PASS",
-    "description": "Unlock exclusive rewards, weapon skins, and operator customizations - Loaded from JSON"
+    "description": "Unlock exclusive rewards, weapon skins, and operator customizations"
   },
   "leaderboard": {
     "title": "LEADERBOARD",
-    "description": "Compete against the best tactical operators and rise through the ranks - Loaded from JSON"
+    "description": "Compete against the best tactical operators and rise through the ranks"
   }
 }

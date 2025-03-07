@@ -2,7 +2,8 @@
 
 import React from 'react'
 import { useAdmin } from '@/app/context/AdminContext'
-import { Calendar, AlertTriangle, ArrowRight, Image } from 'lucide-react'
+import { Calendar, AlertTriangle, ArrowRight } from 'lucide-react'
+import Image from 'next/image'
 
 const LaunchSettingsEditor = () => {
   const { launchSettings, updateLaunchSettings, toggleLaunchMode } = useAdmin();
@@ -96,7 +97,13 @@ const LaunchSettingsEditor = () => {
           {/* Logo Image */}
           <div className="space-y-2">
             <label className="text-xs text-gray-300 flex items-center gap-1">
-              <Image className="h-3 w-3" />
+              <Image 
+                src="/path/to/logo.jpg"
+                alt="Logo"
+                width={12}
+                height={12}
+                className="h-3 w-3"
+              />
               Logo Image URL
             </label>
             <input
@@ -128,10 +135,12 @@ const LaunchSettingsEditor = () => {
             <div className="mt-2 p-3 bg-black/30 rounded-md">
               <p className="text-xs text-gray-400 mb-2">Logo Preview:</p>
               <div className="w-full h-20 flex items-center justify-center bg-black/50 rounded-md overflow-hidden">
-                <img 
+                <Image 
                   src={launchSettings.logoImage} 
                   alt="Game Logo" 
                   className="max-h-16 max-w-[80%] object-contain"
+                  width={500}
+                  height={300}
                   onError={(e) => {
                     // @ts-expect-error - Event target type is not properly inferred
                     e.target.style.display = 'none';

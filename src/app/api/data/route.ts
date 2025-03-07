@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 
+// When using 'output: export', we need this for API routes
+export const dynamic = 'force-static';
+
 // Directory to store JSON data files
 const DATA_DIR = path.join(process.cwd(), 'public', 'data');
 

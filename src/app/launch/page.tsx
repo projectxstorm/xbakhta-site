@@ -79,10 +79,12 @@ const LaunchPage = () => {
         <div className="mb-16">
           {launchSettings.logoImage && !logoError ? (
             <div className="max-w-xs sm:max-w-sm md:max-w-md mx-auto relative h-32 flex items-center justify-center">
-              <img
+              <Image
                 src={launchSettings.logoImage}
                 alt={launchSettings.gameName || "Game Logo"}
                 className="max-h-32 max-w-full object-contain"
+                width={128}
+                height={128}
                 onError={() => setLogoError(true)}
               />
             </div>

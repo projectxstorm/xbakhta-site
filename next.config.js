@@ -4,12 +4,20 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'cdn-icons-png.flaticon.com',
+        hostname: '**',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'http',
+        hostname: '**',
         port: '',
         pathname: '/**',
       },
     ],
   },
+  poweredByHeader: true,
+  reactStrictMode: false,
 }
 
-module.exports = nextConfig 
+export default nextConfig; 
