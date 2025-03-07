@@ -1,0 +1,84 @@
+[
+  {
+    "id": "map-1",
+    "name": "DOWNTOWN",
+    "description": "A dense urban environment with multiple vertical positions, tight corridors, and open plazas.",
+    "image": "/images/maps/downtown.jpg",
+    "features": [
+      "Multi-level shopping mall",
+      "Underground parking garage",
+      "Rooftop helicopter pad",
+      "Interactive environment objects"
+    ],
+    "difficulty": "Hard",
+    "size": "Large",
+    "environment": "Urban",
+    "gameModes": [
+      "Tactical Operations",
+      "Team Deathmatch",
+      "Domination"
+    ],
+    "isNew": true
+  },
+  {
+    "id": "map-2",
+    "name": "OUTPOST",
+    "description": "A remote military outpost surrounded by harsh arctic wilderness.",
+    "image": "/images/maps/outpost.jpg",
+    "features": [
+      "Snowstorms affecting visibility",
+      "Reinforced bunkers",
+      "Frozen lake with thin ice",
+      "Supply caches"
+    ],
+    "difficulty": "Medium",
+    "size": "Medium",
+    "environment": "Arctic",
+    "gameModes": [
+      "Team Deathmatch",
+      "Free For All",
+      "Last Operator Standing"
+    ]
+  },
+  {
+    "id": "map-3",
+    "name": "COMPOUND",
+    "description": "A hidden training facility deep within a forest, featuring tactical training zones.",
+    "image": "/images/maps/compound.jpg",
+    "features": [
+      "Dense forest cover",
+      "Obstacle course",
+      "Shooting range",
+      "Command center",
+      "Living quarters"
+    ],
+    "difficulty": "Easy",
+    "size": "Small",
+    "environment": "Forest",
+    "gameModes": [
+      "Team Deathmatch",
+      "Gun Game",
+      "Tactical Operations"
+    ]
+  },
+  {
+    "id": "map-4",
+    "name": "REFINERY",
+    "description": "An industrial processing facility with dangerous hazards and complex pathways.",
+    "image": "/images/maps/refinery.jpg",
+    "features": [
+      "Pressurized gas containers",
+      "Catwalks and pipes",
+      "Control rooms",
+      "Toxic spill zones"
+    ],
+    "difficulty": "Hard",
+    "size": "Medium",
+    "environment": "Industrial",
+    "gameModes": [
+      "Domination",
+      "Tactical Operations",
+      "Free For All"
+    ]
+  }
+]

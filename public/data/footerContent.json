@@ -1,0 +1,23 @@
+{
+  "copyright": "© 2025 Xbkhta. All rights reserved.",
+  "links": [
+    {
+      "id": "link1",
+      "text": "Privacy Policy",
+      "url": "/privacy",
+      "group": "legal"
+    },
+    {
+      "id": "link2",
+      "text": "Terms of Service",
+      "url": "/terms",
+      "group": "legal"
+    },
+    {
+      "id": "link3",
+      "text": "Contact",
+      "url": "/contact",
+      "group": "support"
+    }
+  ]
+}

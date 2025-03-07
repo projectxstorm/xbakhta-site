@@ -1,0 +1,117 @@
+[
+  {
+    "id": "recon-1",
+    "name": "VIPER",
+    "role": "Recon Specialist",
+    "description": "A stealth reconnaissance expert with advanced surveillance capabilities and unmatched target acquisition skills.",
+    "specialAbility": {
+      "name": "Eagle Eye",
+      "description": "Activate enhanced optics to mark enemies through smoke and thin cover for your entire team.",
+      "cooldown": 45
+    },
+    "loadout": {
+      "primary": "Tactical Marksman Rifle",
+      "secondary": "Suppressed Pistol",
+      "tactical": "Smoke Grenade",
+      "lethal": "Proximity Mine"
+    },
+    "image": "/images/characters/leo.png",
+    "difficulty": "Medium",
+    "stats": {
+      "speed": 80,
+      "armor": 40,
+      "firepower": 75,
+      "stealth": 90,
+      "support": 65
+    },
+    "faction": "PHANTOM",
+    "background": "Former special reconnaissance unit sniper with over 200 confirmed operations.",
+    "isNew": true
+  },
+  {
+    "id": "medic-1",
+    "name": "LOTUS",
+    "role": "Combat Medic",
+    "description": "A tactical support specialist who excels at keeping the squad operational under extreme pressure.",
+    "specialAbility": {
+      "name": "Rapid Response",
+      "description": "Deploy a medical drone that can revive downed teammates faster and restore partial health to the squad.",
+      "cooldown": 60
+    },
+    "loadout": {
+      "primary": "Compact SMG",
+      "secondary": "Tactical Pistol",
+      "tactical": "Healing Dart",
+      "lethal": "Incendiary Grenade"
+    },
+    "image": "/images/characters/lila.png",
+    "difficulty": "Easy",
+    "stats": {
+      "speed": 70,
+      "armor": 50,
+      "firepower": 60,
+      "stealth": 65,
+      "support": 95
+    },
+    "faction": "PHANTOM",
+    "background": "Distinguished combat medic with experience in high-risk extraction operations.",
+    "isPremium": true
+  },
+  {
+    "id": "assault-1",
+    "name": "SLEDGE",
+    "role": "Breacher",
+    "description": "A frontline assault specialist trained to create entry points and lead aggressive pushes into enemy territory.",
+    "specialAbility": {
+      "name": "Breach Charge",
+      "description": "Deploy a powerful explosive that can destroy reinforced walls and stun enemies in the vicinity.",
+      "cooldown": 70
+    },
+    "loadout": {
+      "primary": "Assault Shotgun",
+      "secondary": "Heavy Pistol",
+      "tactical": "Flashbang",
+      "lethal": "Frag Grenade"
+    },
+    "image": "/images/characters/leo.png",
+    "difficulty": "Medium",
+    "stats": {
+      "speed": 60,
+      "armor": 85,
+      "firepower": 90,
+      "stealth": 30,
+      "support": 45
+    },
+    "faction": "SENTINEL",
+    "background": "Ex-demolitions expert with specialized training in urban combat scenarios."
+  },
+  {
+    "id": "tech-1",
+    "name": "CIPHER",
+    "role": "Intelligence Operative",
+    "description": "A tactical hacker who disrupts enemy communications and provides crucial intelligence to the team.",
+    "specialAbility": {
+      "name": "Neural Interface",
+      "description": "Hack into enemy tactical systems to reveal their positions and temporarily disable their abilities.",
+      "cooldown": 55
+    },
+    "loadout": {
+      "primary": "Precision Rifle",
+      "secondary": "Machine Pistol",
+      "tactical": "EMP Grenade",
+      "lethal": "Claymore"
+    },
+    "image": "/images/characters/lila.png",
+    "difficulty": "Hard",
+    "stats": {
+      "speed": 65,
+      "armor": 45,
+      "firepower": 70,
+      "stealth": 85,
+      "support": 75
+    },
+    "faction": "SENTINEL",
+    "background": "Former intelligence agency operative with extensive electronic warfare expertise.",
+    "isPremium": true
+  }
+]

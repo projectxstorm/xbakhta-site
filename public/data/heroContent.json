@@ -1,0 +1,20 @@
+{
+  "title": "BECOME THE BEST TACTICAL OPERATOR",
+  "subtitle": "Join millions of players in intense tactical operations",
+  "buttons": [
+    {
+      "id": "btn1",
+      "text": "Play Now",
+      "url": "#download",
+      "style": "primary",
+      "isPrimary": true
+    },
+    {
+      "id": "btn2",
+      "text": "Watch Trailer",
+      "url": "#trailer",
+      "style": "outline",
+      "isPrimary": false
+    }
+  ]
+}

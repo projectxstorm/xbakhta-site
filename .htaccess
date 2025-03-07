@@ -1,0 +1,29 @@
+# Enable the proxy module
+<IfModule mod_proxy.c>
+    # Enable the proxy_http module
+    <IfModule mod_proxy_http.c>
+        # Preserve Host header
+        ProxyPreserveHost On
+        
+        # Proxy all requests to the Node.js server on port 3000
+        ProxyPass / http://127.0.0.1:3000/
+        ProxyPassReverse / http://127.0.0.1:3000/
+    </IfModule>
+</IfModule>
+
+# Fallback for environments where mod_proxy is not available
+<IfModule !mod_proxy.c>
+    # Redirect all requests to the static files
+    RewriteEngine On
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ /out/$1 [L]
+    RewriteRule ^$ /out/index.html [L]
+</IfModule>
+
+# Set basic security headers
+<IfModule mod_headers.c>
+    Header set X-XSS-Protection "1; mode=block"
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+</IfModule> 

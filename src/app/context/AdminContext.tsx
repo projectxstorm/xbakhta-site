@@ -1,6 +1,7 @@
 'use client'
 
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react'
+import { saveToJsonFile, loadFromJsonFile } from '../utils/dataUtils';
 
 interface SectionContent {
   title: string;
@@ -154,6 +155,17 @@ export interface BottomButton {
   position: string;
 }
 
+export interface LaunchSettings {
+  isActive: boolean;
+  launchDate: string;
+  redirectToLaunch: boolean;
+  title: string;
+  subtitle: string;
+  backgroundImage: string;
+  logoImage: string;
+  gameName: string;
+}
+
 type ContentSections = {
   welcome: SectionContent;
   gameModes: SectionContent;
@@ -215,6 +227,13 @@ type AdminContextType = {
   addBottomButton: (button: BottomButton) => void;
   updateBottomButton: (id: string, data: Partial<BottomButton>) => void;
   deleteBottomButton: (id: string) => void;
+  saveToJsonFile: <T>(type: string, content: T) => Promise<void>;
+  loadFromJsonFile: <T>(type: string) => Promise<T | null>;
+  saveAllData: () => Promise<void>;
+  loadAllData: () => Promise<void>;
+  launchSettings: LaunchSettings;
+  updateLaunchSettings: (data: Partial<LaunchSettings>) => void;
+  toggleLaunchMode: () => void;
 }
 
 const defaultContent: ContentSections = {
@@ -688,6 +707,17 @@ const defaultBottomButtons: BottomButton[] = [
   { id: 'bottom2', text: 'Join Discord', url: 'https://discord.gg', icon: 'discord', position: 'right' }
 ];
 
+const defaultLaunchSettings: LaunchSettings = {
+  isActive: false,
+  launchDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // One week from now
+  redirectToLaunch: false,
+  title: "Game Launch Countdown",
+  subtitle: "Get ready for the ultimate tactical experience",
+  backgroundImage: "/images/backgrounds/launch-bg.jpg",
+  logoImage: "",
+  gameName: "MFPS Tactical"
+};
+
 // Admin password - in a real app, this would be server-side authenticated
 const ADMIN_PASSWORD = 'xbakhta2024';
 
@@ -720,15 +750,15 @@ const AdminContext = createContext<AdminContextType>({
   updateSocialLink: () => {},
   updateSupportLink: () => {},
   logoutAdmin: () => {},
-  gameModes: defaultGameModes,
+  gameModes: [],
   updateGameMode: () => {},
   addGameMode: () => {},
   deleteGameMode: () => {},
-  operators: defaultOperators,
+  operators: [],
   updateOperator: () => {},
   addOperator: () => {},
   deleteOperator: () => {},
-  maps: defaultMaps,
+  maps: [],
   updateMap: () => {},
   addMap: () => {},
   deleteMap: () => {},
@@ -738,7 +768,7 @@ const AdminContext = createContext<AdminContextType>({
   updateHeroContent: () => {},
   footerContent: defaultFooterContent,
   updateFooter: () => {},
-  bottomButtons: defaultBottomButtons,
+  bottomButtons: [],
   updateBottomButtons: () => {},
   premiumRewards: [],
   freeRewards: [],
@@ -753,7 +783,14 @@ const AdminContext = createContext<AdminContextType>({
   deleteFooterLink: () => {},
   addBottomButton: () => {},
   updateBottomButton: () => {},
-  deleteBottomButton: () => {}
+  deleteBottomButton: () => {},
+  saveToJsonFile: async () => Promise.resolve(),
+  loadFromJsonFile: async () => Promise.resolve(null),
+  saveAllData: async () => Promise.resolve(),
+  loadAllData: async () => Promise.resolve(),
+  launchSettings: defaultLaunchSettings,
+  updateLaunchSettings: () => {},
+  toggleLaunchMode: () => {},
 });
 
 export const useAdmin = () => useContext(AdminContext);
@@ -780,7 +817,77 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
   const [premiumRewards, setPremiumRewards] = useState<BattlePassReward[]>([]);
   const [freeRewards, setFreeRewards] = useState<BattlePassReward[]>([]);
   
-  // Initialize state from session storage
+  // Add this with the other state variables
+  const [launchSettings, setLaunchSettings] = useState<LaunchSettings>(defaultLaunchSettings);
+  
+  // Function to save all data to JSON files
+  const saveAllData = async () => {
+    try {
+      await saveToJsonFile('content', editableContent);
+      await saveToJsonFile('navigation', navigationContent);
+      await saveToJsonFile('gameModes', gameModes);
+      await saveToJsonFile('operators', operators);
+      await saveToJsonFile('maps', maps);
+      await saveToJsonFile('battlePass', battlePass);
+      await saveToJsonFile('premiumRewards', premiumRewards);
+      await saveToJsonFile('freeRewards', freeRewards);
+      await saveToJsonFile('heroContent', heroContent);
+      await saveToJsonFile('footerContent', footerContent);
+      await saveToJsonFile('bottomButtons', bottomButtons);
+      await saveToJsonFile('launchSettings', launchSettings);
+      
+      console.log('All data saved to JSON files');
+    } catch (error) {
+      console.error('Error saving all data:', error);
+    }
+  };
+  
+  // Function to load all data from JSON files
+  const loadAllData = async () => {
+    try {
+      const contentData = await loadFromJsonFile<ContentSections>('content');
+      if (contentData) setEditableContent(contentData);
+      
+      const navigationData = await loadFromJsonFile<NavigationContent>('navigation');
+      if (navigationData) setNavigationContent(navigationData);
+      
+      const gameModesData = await loadFromJsonFile<GameMode[]>('gameModes');
+      if (gameModesData) setGameModes(gameModesData);
+      
+      const operatorsData = await loadFromJsonFile<Operator[]>('operators');
+      if (operatorsData) setOperators(operatorsData);
+      
+      const mapsData = await loadFromJsonFile<Map[]>('maps');
+      if (mapsData) setMaps(mapsData);
+      
+      const battlePassData = await loadFromJsonFile<BattlePass>('battlePass');
+      if (battlePassData) setBattlePass(battlePassData);
+      
+      const premiumRewardsData = await loadFromJsonFile<BattlePassReward[]>('premiumRewards');
+      if (premiumRewardsData) setPremiumRewards(premiumRewardsData);
+      
+      const freeRewardsData = await loadFromJsonFile<BattlePassReward[]>('freeRewards');
+      if (freeRewardsData) setFreeRewards(freeRewardsData);
+      
+      const heroContentData = await loadFromJsonFile<HeroContent>('heroContent');
+      if (heroContentData) setHeroContent(heroContentData);
+      
+      const footerContentData = await loadFromJsonFile<FooterContent>('footerContent');
+      if (footerContentData) setFooterContent(footerContentData);
+      
+      const bottomButtonsData = await loadFromJsonFile<BottomButton[]>('bottomButtons');
+      if (bottomButtonsData) setBottomButtons(bottomButtonsData);
+      
+      const launchSettingsData = await loadFromJsonFile<LaunchSettings>('launchSettings');
+      if (launchSettingsData) setLaunchSettings(launchSettingsData);
+      
+      console.log('All data loaded from JSON files');
+    } catch (error) {
+      console.error('Error loading all data:', error);
+    }
+  };
+  
+  // Initialize state from session storage or JSON files
   useEffect(() => {
     if (typeof window !== 'undefined' && !isInitialized) {
       // Check if we have admin session
@@ -789,97 +896,14 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
         setIsAdmin(true);
       }
       
-      // Load saved content if available
-      const savedContent = sessionStorage.getItem(CONTENT_SESSION_KEY);
-      if (savedContent) {
-        try {
-          setEditableContent(JSON.parse(savedContent));
-        } catch (err) {
-          console.error('Error parsing saved content:', err);
-        }
-      }
-      
-      // Load saved navigation if available
-      const savedNav = sessionStorage.getItem(NAV_SESSION_KEY);
-      if (savedNav) {
-        try {
-          setNavigationContent(JSON.parse(savedNav));
-        } catch (err) {
-          console.error('Error parsing saved navigation:', err);
-        }
-      }
-      
-      // Load saved game modes if available
-      const savedGameModes = sessionStorage.getItem(GAME_MODES_KEY);
-      if (savedGameModes) {
-        try {
-          setGameModes(JSON.parse(savedGameModes));
-        } catch (err) {
-          console.error('Error parsing saved game modes:', err);
-        }
-      }
-      
-      // Load saved operators if available
-      const savedOperators = sessionStorage.getItem(OPERATORS_KEY);
-      if (savedOperators) {
-        try {
-          setOperators(JSON.parse(savedOperators));
-        } catch (err) {
-          console.error('Error parsing saved operators:', err);
-        }
-      }
-      
-      // Load saved maps if available
-      const savedMaps = sessionStorage.getItem(MAPS_KEY);
-      if (savedMaps) {
-        try {
-          setMaps(JSON.parse(savedMaps));
-        } catch (err) {
-          console.error('Error parsing saved maps:', err);
-        }
-      }
-      
-      // Load saved battle pass if available
-      const savedBattlePass = sessionStorage.getItem(BATTLE_PASS_KEY);
-      if (savedBattlePass) {
-        try {
-          setBattlePass(JSON.parse(savedBattlePass));
-        } catch (err) {
-          console.error('Error parsing saved battle pass:', err);
-        }
-      }
-      
-      // Load saved hero content if available
-      const savedHeroContent = sessionStorage.getItem(HERO_CONTENT_KEY);
-      if (savedHeroContent) {
-        try {
-          setHeroContent(JSON.parse(savedHeroContent));
-        } catch (err) {
-          console.error('Error parsing saved hero content:', err);
-        }
-      }
-      
-      // Load saved footer content if available
-      const savedFooterContent = sessionStorage.getItem(FOOTER_CONTENT_KEY);
-      if (savedFooterContent) {
-        try {
-          setFooterContent(JSON.parse(savedFooterContent));
-        } catch (err) {
-          console.error('Error parsing saved footer content:', err);
-        }
-      }
-      
-      // Load saved bottom buttons if available
-      const savedBottomButtons = sessionStorage.getItem(BOTTOM_BUTTONS_KEY);
-      if (savedBottomButtons) {
-        try {
-          setBottomButtons(JSON.parse(savedBottomButtons));
-        } catch (err) {
-          console.error('Error parsing saved bottom buttons:', err);
-        }
-      }
-      
-      setIsInitialized(true);
+      // Load data from JSON files
+      loadAllData().then(() => {
+        setIsInitialized(true);
+        console.log('Admin context initialized with data from JSON files');
+      }).catch(error => {
+        console.error('Error loading initial data from JSON files:', error);
+        setIsInitialized(true); // Still set as initialized even if there's an error
+      });
     }
   }, [isInitialized]);
   
@@ -1303,6 +1327,92 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
     setBottomButtons(prev => prev.filter(btn => btn.id !== id));
   };
   
+  // Add auto-save to JSON files when state changes
+  useEffect(() => {
+    if (isInitialized) {
+      saveToJsonFile('content', editableContent);
+    }
+  }, [editableContent, isInitialized]);
+  
+  useEffect(() => {
+    if (isInitialized) {
+      saveToJsonFile('navigation', navigationContent);
+    }
+  }, [navigationContent, isInitialized]);
+  
+  useEffect(() => {
+    if (isInitialized) {
+      saveToJsonFile('gameModes', gameModes);
+    }
+  }, [gameModes, isInitialized]);
+  
+  useEffect(() => {
+    if (isInitialized) {
+      saveToJsonFile('operators', operators);
+    }
+  }, [operators, isInitialized]);
+  
+  useEffect(() => {
+    if (isInitialized) {
+      saveToJsonFile('maps', maps);
+    }
+  }, [maps, isInitialized]);
+  
+  useEffect(() => {
+    if (isInitialized) {
+      saveToJsonFile('battlePass', battlePass);
+    }
+  }, [battlePass, isInitialized]);
+  
+  useEffect(() => {
+    if (isInitialized) {
+      saveToJsonFile('premiumRewards', premiumRewards);
+    }
+  }, [premiumRewards, isInitialized]);
+  
+  useEffect(() => {
+    if (isInitialized) {
+      saveToJsonFile('freeRewards', freeRewards);
+    }
+  }, [freeRewards, isInitialized]);
+  
+  useEffect(() => {
+    if (isInitialized) {
+      saveToJsonFile('heroContent', heroContent);
+    }
+  }, [heroContent, isInitialized]);
+  
+  useEffect(() => {
+    if (isInitialized) {
+      saveToJsonFile('footerContent', footerContent);
+    }
+  }, [footerContent, isInitialized]);
+  
+  useEffect(() => {
+    if (isInitialized) {
+      saveToJsonFile('bottomButtons', bottomButtons);
+    }
+  }, [bottomButtons, isInitialized]);
+  
+  // Add autosave effect for launch settings
+  useEffect(() => {
+    if (isInitialized) {
+      saveToJsonFile('launchSettings', launchSettings);
+    }
+  }, [launchSettings, isInitialized]);
+  
+  // Add these functions to handle launch settings
+  const updateLaunchSettings = (data: Partial<LaunchSettings>) => {
+    setLaunchSettings(prev => ({ ...prev, ...data }));
+  };
+  
+  const toggleLaunchMode = () => {
+    setLaunchSettings(prev => ({ 
+      ...prev, 
+      isActive: !prev.isActive 
+    }));
+  };
+  
   return (
     <AdminContext.Provider 
       value={{ 
@@ -1355,7 +1465,14 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
         deleteFooterLink,
         addBottomButton,
         updateBottomButton,
-        deleteBottomButton
+        deleteBottomButton,
+        saveToJsonFile,
+        loadFromJsonFile,
+        saveAllData,
+        loadAllData,
+        launchSettings,
+        updateLaunchSettings,
+        toggleLaunchMode
       }}
     >
       {children}

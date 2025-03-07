@@ -9,7 +9,8 @@ import {
   Plus as PlusIcon,
   Trash2 as TrashIcon,
   Star as StarIcon,
-  Tag as NewIcon
+  Tag as NewIcon,
+  Save as SaveIcon
 } from 'lucide-react'
 
 // Import our separate editor components
@@ -18,6 +19,7 @@ import BattlePassEditor from './forms/BattlePassEditor';
 import HeroButtonsEditor from './forms/HeroButtonsEditor';
 import FooterEditor from './forms/FooterEditor';
 import BottomButtonsEditor from './forms/BottomButtonsEditor';
+import LaunchSettingsEditor from './forms/LaunchSettingsEditor';
 
 interface SectionEditorProps {
   section: string;
@@ -1188,23 +1190,92 @@ const OperatorForm = ({
 };
 
 const AdminSidebar = () => {
-  const { isAdmin, editableContent, resetContent, adminSidebarOpen, logoutAdmin, navigationContent } = useAdmin();
+  const { isAdmin, editableContent, adminSidebarOpen, toggleAdminSidebar, logoutAdmin, navigationContent, saveAllData } = useAdmin();
   const [activeTab, setActiveTab] = useState('sections');
 
   if (!isAdmin) return null;
 
   const tabs = [
-    { id: 'sections', label: 'Content' },
+    { id: 'sections', label: 'Content Sections' },
     { id: 'navigation', label: 'Navigation' },
     { id: 'hero', label: 'Hero Section' },
     { id: 'gamemodes', label: 'Game Modes' },
     { id: 'operators', label: 'Operators' },
     { id: 'maps', label: 'Maps' },
     { id: 'battlepass', label: 'Battle Pass' },
+    { id: 'launch', label: 'Launch Mode' },
     { id: 'footer', label: 'Footer' },
     { id: 'bottoms', label: 'Bottom Buttons' },
     { id: 'settings', label: 'Settings' }
   ];
+
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case 'sections':
+        return (
+          <>
+            {Object.entries(editableContent).map(([section, content]) => (
+              <SectionEditor
+                key={section}
+                section={section}
+                title={content.title}
+                description={content.description}
+              />
+            ))}
+          </>
+        );
+      case 'navigation':
+        return (
+          <>
+            <BrandingEditor />
+            <DownloadButtonEditor />
+            <MenuItemsEditor />
+            <SocialLinksEditor />
+          </>
+        );
+      case 'hero':
+        return <HeroButtonsEditor />;
+      case 'gamemodes':
+        return <GameModesEditor />;
+      case 'operators':
+        return <OperatorsEditor />;
+      case 'maps':
+        return <MapsEditor />;
+      case 'battlepass':
+        return <BattlePassEditor />;
+      case 'launch':
+        return <LaunchSettingsEditor />;
+      case 'footer':
+        return <FooterEditor />;
+      case 'bottoms':
+        return <BottomButtonsEditor />;
+      case 'settings':
+        return (
+          <div className="space-y-4">
+            <div className="p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-md">
+              <h3 className="text-sm font-semibold text-yellow-400 mb-2">SESSION INFORMATION</h3>
+              <p className="text-xs text-gray-300 mb-2">
+                Your admin session will remain active until you log out or close the browser.
+              </p>
+              <p className="text-xs text-gray-300">
+                All content changes are saved to your session automatically.
+              </p>
+            </div>
+            
+            <div>
+              <button
+                onClick={() => saveAllData()}
+                className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
+              >
+                Save All
+              </button>
+            </div>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
 
   return (
     <div className={`
@@ -1215,37 +1286,46 @@ const AdminSidebar = () => {
       <div className="h-full overflow-y-auto p-5">
         <div className="mb-2 flex justify-between items-start">
           <div>
-            <h2 className="text-lg font-bold">
-              <span className="text-yellow-400">ADMIN</span> PANEL
-            </h2>
-            <p className="text-gray-400 text-xs mt-1">
-              Edit site content and settings
-            </p>
+            <button
+              onClick={logoutAdmin}
+              className="bg-red-600/20 hover:bg-red-600/40 text-red-400 py-1 px-2 rounded text-xs flex items-center gap-1"
+              title="Logout from admin session"
+            >
+              Logout
+            </button>
+            <div className="text-sm mt-2 flex flex-col">
+              <div className="flex items-center gap-1 text-green-400">
+                <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                <span>Admin Session Active</span>
+              </div>
+              <span className="text-yellow-500">{navigationContent.studioName}</span>
+            </div>
           </div>
+          
+          <div className="flex gap-3">
+            <button
+              onClick={toggleAdminSidebar}
+              className="text-gray-400 hover:text-white"
+            >
+              <CloseIcon size={20} />
+            </button>
+          </div>
+        </div>
 
+        {/* Add Save All button */}
+        <div className="mb-4 flex justify-between items-center">
+          <h2 className="text-xl font-bold text-white">Admin Controls</h2>
           <button
-            onClick={logoutAdmin}
-            className="bg-red-600/20 hover:bg-red-600/40 text-red-400 py-1 px-2 rounded text-xs flex items-center gap-1"
-            title="Logout from admin session"
+            onClick={() => saveAllData()}
+            className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center"
+            title="Save all data to JSON files"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-            </svg>
-            Logout
+            <SaveIcon size={16} className="mr-1" />
+            Save All
           </button>
         </div>
 
-        {/* Session indicator */}
-        <div className="mb-4 bg-black/60 rounded p-2 border border-yellow-600/20">
-          <div className="flex items-center justify-between text-xs text-gray-400">
-            <div className="flex items-center gap-1">
-              <div className="w-2 h-2 rounded-full bg-green-500"></div>
-              <span>Admin Session Active</span>
-            </div>
-            <span className="text-yellow-500">{navigationContent.studioName}</span>
-          </div>
-        </div>
-        
+        {/* Tab navigation */}
         <div className="flex flex-wrap border-b border-gray-800 mb-4">
           {tabs.map(tab => (
             <button
@@ -1262,78 +1342,7 @@ const AdminSidebar = () => {
           ))}
         </div>
         
-        {activeTab === 'sections' && (
-          <>
-            {Object.entries(editableContent).map(([section, content]) => (
-              <SectionEditor
-                key={section}
-                section={section}
-                title={content.title}
-                description={content.description}
-              />
-            ))}
-          </>
-        )}
-        
-        {activeTab === 'navigation' && (
-          <>
-            <BrandingEditor />
-            <DownloadButtonEditor />
-            <MenuItemsEditor />
-            <SocialLinksEditor />
-          </>
-        )}
-        
-        {activeTab === 'hero' && (
-          <HeroButtonsEditor />
-        )}
-        
-        {activeTab === 'gamemodes' && (
-          <GameModesEditor />
-        )}
-        
-        {activeTab === 'operators' && (
-          <OperatorsEditor />
-        )}
-        
-        {activeTab === 'maps' && (
-          <MapsEditor />
-        )}
-        
-        {activeTab === 'battlepass' && (
-          <BattlePassEditor />
-        )}
-        
-        {activeTab === 'footer' && (
-          <FooterEditor />
-        )}
-        
-        {activeTab === 'bottoms' && (
-          <BottomButtonsEditor />
-        )}
-        
-        {activeTab === 'settings' && (
-          <div className="space-y-4">
-            <div className="p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-md">
-              <h3 className="text-sm font-semibold text-yellow-400 mb-2">SESSION INFORMATION</h3>
-              <p className="text-xs text-gray-300 mb-2">
-                Your admin session will remain active until you log out or close the browser.
-              </p>
-              <p className="text-xs text-gray-300">
-                All content changes are saved to your session automatically.
-              </p>
-            </div>
-            
-            <div>
-              <button
-                onClick={resetContent}
-                className="bg-red-600/70 hover:bg-red-600 text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
-              >
-                Reset All Content
-              </button>
-            </div>
-          </div>
-        )}
+        {renderTabContent()}
       </div>
     </div>
   );

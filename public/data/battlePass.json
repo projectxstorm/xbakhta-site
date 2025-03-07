@@ -1,0 +1,12 @@
+{
+  "id": "bp-1",
+  "name": "Season Pass",
+  "description": "Get exclusive rewards and benefits",
+  "image": "/images/battlepass.jpg",
+  "price": 999,
+  "season": "Season 1",
+  "durationDays": 90,
+  "startDate": "2025-03-07",
+  "endDate": "2025-06-05",
+  "isActive": true
+}

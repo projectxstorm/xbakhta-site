@@ -93,6 +93,40 @@ yarn start
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
+## DirectAdmin Deployment
+
+To deploy this site to a DirectAdmin hosting environment:
+
+1. Build the static site and ensure the server files are ready:
+```bash
+npm run build
+```
+
+2. Upload all files to your DirectAdmin hosting using FTP/SFTP, including:
+   - The `out` directory (contains the static Next.js export)
+   - `server.js` file
+   - `package.json` file
+   - `.htaccess` file
+   - Any other necessary configuration files
+
+3. SSH into your DirectAdmin server and navigate to your website directory.
+
+4. Install the Node.js dependencies:
+```bash
+npm install
+```
+
+5. Set up a Node.js application in DirectAdmin:
+   - Go to your DirectAdmin control panel
+   - Navigate to "Advanced Features" > "Node.js App"
+   - Create a new Node.js application
+   - Set the entry point to `server.js`
+   - Set the port to match what's in your server.js (default: 3000)
+   - Enable "Start on boot" option
+   - Save and start the application
+
+6. Your application should now be running and accessible through your domain.
+
 ## Created By
 
 BlinkBox Game Studios

@@ -43,6 +43,9 @@ const Navigation = () => {
                 {item.label}
               </Link>
             ))}
+            <Link href="/launch" className="menu-item text-yellow-400 font-medium">
+              LAUNCH
+            </Link>
           </div>
 
           {/* Desktop Social & Download */}
@@ -121,6 +124,19 @@ const Navigation = () => {
                     <span>{item.label}</span>
                   </Link>
                 ))}
+                <Link 
+                  href="/launch" 
+                  className="flex items-center gap-2 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors border border-yellow-500/40"
+                >
+                  <Image 
+                    src="https://cdn-icons-png.flaticon.com/128/2764/2764505.png"
+                    alt="Launch"
+                    width={20}
+                    height={20}
+                    className="opacity-75"
+                  />
+                  <span className="text-yellow-400 font-medium">LAUNCH</span>
+                </Link>
               </div>
 
               {/* Social Links */}

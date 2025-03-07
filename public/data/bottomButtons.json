@@ -1,0 +1,16 @@
+[
+  {
+    "id": "bottom1",
+    "text": "Download Now",
+    "url": "#download",
+    "icon": "download",
+    "position": "center"
+  },
+  {
+    "id": "bottom2",
+    "text": "Join Discord",
+    "url": "https://discord.gg",
+    "icon": "discord",
+    "position": "right"
+  }
+]
