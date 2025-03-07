@@ -11,21 +11,17 @@ const DATA_DIR = path.join(process.cwd(), 'public', 'data');
 // Ensure the data directory exists
 if (!fs.existsSync(DATA_DIR)) {
   fs.mkdirSync(DATA_DIR, { recursive: true });
-  console.log(`Created data directory at ${DATA_DIR}`);
 } else {
-  console.log(`Data directory exists at ${DATA_DIR}`);
+  // Directory already exists
 }
 
 // Save data to a JSON file
 export async function POST(request: NextRequest) {
-  console.log('Received POST request to /api/data');
-  
   try {
     const data = await request.json();
     const { type, content } = data;
     
     if (!type) {
-      console.error('Missing required parameter: type');
       return NextResponse.json(
         { error: 'Missing required parameter: type' },
         { status: 400 }
@@ -33,7 +29,6 @@ export async function POST(request: NextRequest) {
     }
     
     if (!content) {
-      console.error(`Missing required parameter: content for type ${type}`);
       return NextResponse.json(
         { error: 'Missing required parameter: content' },
         { status: 400 }
@@ -41,15 +36,13 @@ export async function POST(request: NextRequest) {
     }
     
     const filePath = path.join(DATA_DIR, `${type}.json`);
-    console.log(`Writing to file: ${filePath}`);
     
     try {
       fs.writeFileSync(filePath, JSON.stringify(content, null, 2), 'utf8');
-      console.log(`Successfully wrote to ${filePath}`);
-    } catch (fsError: any) {
-      console.error(`FS Error writing to ${filePath}:`, fsError);
+    } catch (fsError: unknown) {
+      const errorMessage = fsError instanceof Error ? fsError.message : 'Unknown file system error';
       return NextResponse.json(
-        { error: `File system error: ${fsError.message || 'Unknown file system error'}` },
+        { error: `File system error: ${errorMessage}` },
         { status: 500 }
       );
     }
@@ -58,10 +51,10 @@ export async function POST(request: NextRequest) {
       { success: true, message: `Data saved for ${type}` },
       { status: 200 }
     );
-  } catch (error: any) {
-    console.error('Error saving data:', error);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
-      { error: `Failed to save data: ${error.message || 'Unknown error'}` },
+      { error: `Failed to save data: ${errorMessage}` },
       { status: 500 }
     );
   }
@@ -72,11 +65,8 @@ export async function GET(request: NextRequest) {
   const url = new URL(request.url);
   const type = url.searchParams.get('type');
   
-  console.log(`Received GET request to /api/data for type: ${type}`);
-  
   try {
     if (!type) {
-      console.error('Missing required parameter: type');
       return NextResponse.json(
         { error: 'Missing required parameter: type' },
         { status: 400 }
@@ -84,10 +74,8 @@ export async function GET(request: NextRequest) {
     }
     
     const filePath = path.join(DATA_DIR, `${type}.json`);
-    console.log(`Attempting to read file: ${filePath}`);
     
     if (!fs.existsSync(filePath)) {
-      console.log(`File not found: ${filePath}`);
       return NextResponse.json(
         { error: `No data found for ${type}` },
         { status: 404 }
@@ -96,7 +84,6 @@ export async function GET(request: NextRequest) {
     
     try {
       const fileContents = fs.readFileSync(filePath, 'utf8');
-      console.log(`Successfully read file: ${filePath}`);
       
       try {
         const content = JSON.parse(fileContents);
@@ -104,24 +91,24 @@ export async function GET(request: NextRequest) {
           { success: true, type, content },
           { status: 200 }
         );
-      } catch (parseError: any) {
-        console.error(`JSON parse error for ${filePath}:`, parseError);
+      } catch (parseError: unknown) {
+        const errorMessage = parseError instanceof Error ? parseError.message : 'Failed to parse JSON';
         return NextResponse.json(
-          { error: `Invalid JSON in file: ${parseError.message || 'Failed to parse JSON'}` },
+          { error: `Invalid JSON in file: ${errorMessage}` },
           { status: 500 }
         );
       }
-    } catch (fsError: any) {
-      console.error(`FS Error reading ${filePath}:`, fsError);
+    } catch (fsError: unknown) {
+      const errorMessage = fsError instanceof Error ? fsError.message : 'Unknown file system error';
       return NextResponse.json(
-        { error: `File system error: ${fsError.message || 'Unknown file system error'}` },
+        { error: `File system error: ${errorMessage}` },
         { status: 500 }
       );
     }
-  } catch (error: any) {
-    console.error(`Error loading data for ${type}:`, error);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
-      { error: `Failed to load data: ${error.message || 'Unknown error'}` },
+      { error: `Failed to load data: ${errorMessage}` },
       { status: 500 }
     );
   }

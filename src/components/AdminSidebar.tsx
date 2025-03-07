@@ -1268,10 +1268,10 @@ const AdminSidebar = () => {
                 Your admin session will remain active until you log out or close the browser.
               </p>
               <p className="text-xs text-gray-300 mb-2">
-                Content changes are only saved when you click the "Save All" button.
+                Content changes are only saved when you click the &quot;Save All&quot; button.
               </p>
               <p className="text-xs text-gray-300">
-                Data is loaded once per session. Use "Refresh Data" to reload from server.
+                Data is loaded once per session. Use &quot;Refresh Data&quot; to reload from server.
               </p>
             </div>
             

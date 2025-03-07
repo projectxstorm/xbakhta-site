@@ -17,7 +17,7 @@ const LaunchSettingsEditor = () => {
         <div className="p-3 border border-blue-600/30 bg-blue-900/20 rounded text-sm flex items-center gap-2 mb-4">
           <AlertTriangle className="h-4 w-4 text-blue-500" />
           <span className="text-blue-400">
-            Changes to launch settings are not saved automatically. Click "Save All Changes" in the Settings tab when done.
+            Changes to launch settings are not saved automatically. Click &quot;Save All Changes&quot; in the Settings tab when done.
           </span>
         </div>
         
